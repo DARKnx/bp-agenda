@@ -1,5 +1,5 @@
 {
-  "name": "tsx-vue",
+  "name": "bp-agenda",
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
