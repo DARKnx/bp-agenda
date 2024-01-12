@@ -1,8 +1,9 @@
+  <script setup>
+  import { useRouter } from 'vue-router';
+  
+  const router = useRouter();
+  </script>
+
 <template>
-    <v-btn>Hello world vue</v-btn>
+  <router-view />
 </template>
-  
-<script setup lang="ts">
-    //
-</script>
-  
