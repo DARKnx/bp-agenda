@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import SignIn from '../pages/signIn';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -15,6 +14,22 @@ const router = createRouter({
       component: () => import('../pages/signUp')
     },
   ]
+});
+
+router.beforeEach((to, from, next) => {
+
+  if (!to.meta.requiresAuth) return next();
+
+    var isAuthenticated;
+    
+    if (isAuthenticated) {
+
+      next();
+    } else {
+
+      next('/signin');
+    }
+
 });
 
 export default router;
