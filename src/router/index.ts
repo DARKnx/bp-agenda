@@ -1,5 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
+import { useUserStore } from '../stores/user';
+import { getUser } from '../actions/user';
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -11,30 +14,28 @@ const router = createRouter({
     {
       path: '/dashboard',
       name: 'dashboard',
-      component: () => import('../pages/dashboard/index.vue')
+      component: () => import('../pages/dashboard/index.vue'),
+      meta: { requiresAuth: true }
     },
     {
-      path: '/sucess',
-      name: 'sucess',
-      component: () => import('../pages/signUp/index.vue')
+      path: '/success',
+      name: 'success',
+      component: () => import('../pages/signUp/index.vue'),
+      meta: { requiresAuth: true }
     },
   ]
 });
 
-router.beforeEach((to, from, next) => {
-
-  if (!to.meta.requiresAuth) return next();
-
-    var isAuthenticated;
-    
-    if (isAuthenticated) {
-
-      next();
-    } else {
-
-      next('/signin');
-    }
-
+router.beforeEach(async (to, from, next) => {
+  if (!to.meta.requiresAuth) {
+    return next();
+  }
+  var user = await getUser();
+  if (!user.error) {
+    next();
+  } else {
+    next('/');
+  }
 });
 
 export default router;
