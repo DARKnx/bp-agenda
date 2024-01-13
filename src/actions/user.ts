@@ -1,7 +1,10 @@
+import { AxiosError } from "axios";
+
 import { UserSignIn, UserSignUp } from "../types/user";
 import setAuthToken from "../utils/setAuthToken";
 import { useUserStore } from "../stores/user";
 import api from "../utils/api";
+
 
 export const getUser = async (): Promise<any> => {
     try {
@@ -20,7 +23,7 @@ export const getUser = async (): Promise<any> => {
         return data;
 
     } catch (err) {
-        return { error: (err instanceof Error) ? err.response?.data.msg : 'Erro desconhecido.' };
+        return { error: (err instanceof AxiosError) ? err.response?.data.msg : 'Erro desconhecido.' };
     }
 }
 
@@ -37,13 +40,14 @@ export const signIn = async ({ email, password }: UserSignIn): Promise<any> => {
         var user = await getUser();
         return user;
     } catch (err) {
-        return { error: (err instanceof Error) ? err.response?.data.msg : 'Erro desconhecido.' };
+        return { error: (err instanceof AxiosError) ? err.response?.data.msg : 'Erro desconhecido.' };
     }
 }
 
 export const signUp = async ({ email, password, name, role }: UserSignUp): Promise<any> => {
     try {
         const response = await api.post('/user/signup', { email, password, name, role });
+        console.log(response.data)
         const token = response.data.token;
         if (!token) {
             return {
@@ -54,6 +58,6 @@ export const signUp = async ({ email, password, name, role }: UserSignUp): Promi
         var user = await getUser();
         return user;
     } catch(err){
-
+        return { error: (err instanceof AxiosError) ? err.response?.data.msg : 'Erro desconhecido.' };
     }
 }
