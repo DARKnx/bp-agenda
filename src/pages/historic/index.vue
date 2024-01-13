@@ -1,5 +1,6 @@
 <template>
     <v-text>
+        historic -
         {{ store.user.name }}
     </v-text>
 </template>

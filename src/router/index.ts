@@ -12,15 +12,33 @@ const router = createRouter({
       component: () => import('../pages/login/index.vue')
     },
     {
-      path: '/dashboard',
-      name: 'dashboard',
-      component: () => import('../pages/dashboard/index.vue'),
+      path: '/dashboard/schedule',
+      name: 'schedule',
+      component: () => import('../pages/schedule/index.vue'),
       meta: { requiresAuth: true }
     },
     {
-      path: '/success',
-      name: 'success',
-      component: () => import('../pages/signUp/index.vue'),
+      path: '/logout',
+      name: 'logout',
+      component: () => import('../pages/logout/index.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/dashboard/settings',
+      name: 'settings',
+      component: () => import('../pages/settings/index.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/dashboard/profile',
+      name: 'profile',
+      component: () => import('../pages/profile/index.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/dashboard/historic',
+      name: 'profile',
+      component: () => import('../pages/historic/index.vue'),
       meta: { requiresAuth: true }
     },
   ]

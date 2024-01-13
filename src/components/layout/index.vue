@@ -76,13 +76,13 @@
     const currentRoute = ref(route.path);
 
     const defaultLinks = [
-      ['mdi mdi-calendar-account', 'Agenda', '/dashboard'],
-      ['mdi mdi-account-box', 'Minha conta', '/minha-conta'],
-      ['mdi mdi-history', 'Histórico', '/historico'],
+      ['mdi mdi-calendar-account', 'Agenda', '/dashboard/schedule'],
+      ['mdi mdi-account-box', 'Minha conta', '/dashboard/profile'],
+      ['mdi mdi-history', 'Histórico', '/dashboard/historic'],
     ];
 
     const settingsLinks = [
-      ['mdi mdi-cog', 'Configurações', '/configuracoes'],
+      ['mdi mdi-cog', 'Configurações', '/dashboard/settings'],
       ['mdi mdi-logout', 'Sair', '/logout'],
     ];
 
