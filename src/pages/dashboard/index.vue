@@ -29,8 +29,8 @@
               link
               :class="{ 'v-list-item--active': isActiveRoute(route) }"
             >
-              <v-list-item-content class="d-flex px-6" style="justify-content: space-between;">
-                <v-list-item-icon>
+              <v-list-item-content class="d-flex px-6" >
+                <v-list-item-icon class="pr-5">
                   <v-icon>{{ icon }}</v-icon>
                 </v-list-item-icon>
                 <v-list-item-title class="">{{ text }}</v-list-item-title>
@@ -39,8 +39,8 @@
           </v-list>
         </div>
 
-        <v-list>
-          <v-divider></v-divider>
+        <v-list class="pb-4">
+          <v-divider class="py-2"></v-divider>
           <v-list-item
             v-for="[icon, text, route] in links2"
             :key="icon"
@@ -48,8 +48,8 @@
             link
             :class="{ 'v-list-item--active': isActiveRoute(route) }"
           >
-            <v-list-item-content class="d-flex px-6" style="justify-content: space-between;">
-              <v-list-item-icon>
+            <v-list-item-content class="d-flex px-6">
+              <v-list-item-icon class="pr-5">
                 <v-icon>{{ icon }}</v-icon>
               </v-list-item-icon>
               <v-list-item-title class="">{{ text }}</v-list-item-title>
@@ -72,12 +72,13 @@ const store = useUserStore();
 const links = [
   ['mdi mdi-calendar-account', 'Agenda', '/agenda'],
   ['mdi mdi-history', 'Histórico', '/historico'],
+  ['mdi mdi-account-box', 'Minha conta', '/minha-conta'],
 ];
 
 const links2 = [
-  ['mdi mdi-account-box', 'Minha conta', '/minha-conta'],
   ['mdi mdi-cog', 'Configurações', '/configuracoes'],
-];
+  ['mdi mdi-logout', 'Sair', '/logout'],
+  ];
 
 const drawer = ref(null);
 const route = useRoute();
