@@ -49,7 +49,7 @@
     <form @submit.prevent="submitForm">
       <v-text-field 
         :rules="[rules.required, rules.email]"
-        prepend-inner-icon="mdi mdi-lock"
+        prepend-inner-icon="mdi mdi-at"
         v-model="email" 
         label="Email" 
         class="my-5"
@@ -61,7 +61,7 @@
         @click:append-inner="togglePasswordVisibility"
         :type="showPassword ? 'text' : 'password'" 
         :rules="[rules.required, rules.min]" 
-        prepend-inner-icon="mdi mdi-at"
+        prepend-inner-icon="mdi mdi-lock"
         v-model="password" 
         label="Senha"
       />

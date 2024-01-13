@@ -20,7 +20,7 @@ export const getUser = async (): Promise<any> => {
         return data;
 
     } catch (err) {
-        return { message:(err instanceof Error) ? err.message : 'Erro desconhecido'  };
+        return { error: (err instanceof Error) ? err.response?.data.msg : 'Erro desconhecido.' };
     }
 }
 
@@ -41,9 +41,18 @@ export const signIn = async ({ email, password }: UserSignIn): Promise<any> => {
     }
 }
 
-export const signUp = async ({ email, password, name }: UserSignUp): Promise<any> => {
+export const signUp = async ({ email, password, name, role }: UserSignUp): Promise<any> => {
     try {
-
+        const response = await api.post('/user/signup', { email, password, name, role });
+        const token = response.data.token;
+        if (!token) {
+            return {
+                error: "Erro na autenticação."
+            };
+        }
+        await setAuthToken(token);
+        var user = await getUser();
+        return user;
     } catch(err){
 
     }

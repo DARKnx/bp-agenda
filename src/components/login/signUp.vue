@@ -8,6 +8,8 @@
     const showPassword = ref(false);
     const password = ref('');
     const email = ref('');
+    const name = ref('');
+    const role = ref('normal');
 
     const rules = {
       email: v => /^\S+@\S+\.\S+$/.test(v) || 'E-mail inválido',
@@ -28,10 +30,10 @@
 
 
     const submitForm = async () => {
-      if (email.value.length == 0 || password.value.length < 8) return toast.error('Por favor, preencha todos os campos.');
+      if (email.value.length == 0 || password.value.length < 8 || name.value.length == 0) return toast.error('Por favor, preencha todos os campos.');
       if (!(/^\S+@\S+\.\S+$/.test(email.value))) return toast.error('E-mail inválido');
 
-      const user = await signIn({ email: email.value, password: password.value });
+      const user = await signUp({ email: email.value, password: password.value, name: name.value, role: role.value});
       if (user?.error) return toast.error(user.error);
       toast.sucess('Autenticação bem-sucedida');
       router.push('/dashboard');
@@ -48,8 +50,16 @@
     </v-card-text>
     <form @submit.prevent="submitForm">
       <v-text-field 
+        :rules="[rules.required]"
+        prepend-inner-icon="mdi mdi-alphabetical-variant"
+        v-model="name" 
+        label="Nome" 
+        class="my-5"
+        clearable 
+        />
+      <v-text-field 
         :rules="[rules.required, rules.email]"
-        prepend-inner-icon="mdi mdi-lock"
+        prepend-inner-icon="mdi mdi-at"
         v-model="email" 
         label="Email" 
         class="my-5"
@@ -61,17 +71,23 @@
         @click:append-inner="togglePasswordVisibility"
         :type="showPassword ? 'text' : 'password'" 
         :rules="[rules.required, rules.min]" 
-        prepend-inner-icon="mdi mdi-at"
+        prepend-inner-icon="mdi mdi-lock"
         v-model="password" 
         label="Senha"
       />
+      <v-select
+        label="Cargo"
+        v-model="role"
+        :items="['normal', 'admin', 'consultor']"
+      />
       <v-btn block class="mb-5 mx-auto" color="blue" size="large" variant="tonal" type="submit" max-width="50%">
-        ENTRAR
+        CADASTRAR
       </v-btn>
       <v-card-text class="text-center">
         <a class="text-blue text-decoration-none" color="primary" href="#" rel="noopener noreferrer" target="_blank" @click.prevent="switchWindow">
-          Criar uma conta 
-          <v-icon icon="mdi-chevron-right"></v-icon>
+          
+          <v-icon icon="mdi-chevron-left"></v-icon>
+          Já tem uma conta?
         </a>
       </v-card-text>
     </form>
