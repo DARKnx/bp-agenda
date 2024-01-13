@@ -12,17 +12,15 @@ export const getUser = async (): Promise<any> => {
             store.$reset();
             localStorage.removeItem('isAuthenticated');
             return {
-                message: "Erro na autenticação"
+                error: "Erro na autenticação."
             }; 
         }
         store.$patch({ user: data, isAuthenticated: true });
-        localStorage.set('isAuthenticated', 'true');
+        localStorage.setItem('isAuthenticated', 'true');
         return data;
 
     } catch (err) {
-        return {
-            message:(err instanceof Error) ? err.message : 'Erro desconhecido'
-        };
+        return { message:(err instanceof Error) ? err.message : 'Erro desconhecido'  };
     }
 }
 
@@ -32,17 +30,14 @@ export const signIn = async ({ email, password }: UserSignIn): Promise<any> => {
         const token = response.data.token;
         if (!token) {
             return {
-                message: "Erro na autenticação",
-                error: "Token não encontrado"
+                error: "Erro na autenticação."
             };
         }
         await setAuthToken(token);
         var user = await getUser();
         return user;
     } catch (err) {
-        return {
-            message: (err instanceof Error) ? err.message : 'Erro desconhecido'
-               }
+        return { error: (err instanceof Error) ? err.response?.data.msg : 'Erro desconhecido.' };
     }
 }
 

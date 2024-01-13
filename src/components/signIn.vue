@@ -5,8 +5,8 @@ import { signIn } from '../actions/user.ts';
 import { useToast } from "vue-toastification";
 
 const showPassword = ref(false);
-const password = ref('');
-const email = ref('');
+const password = ref('1234567');
+const email = ref('admin@gmail.com');
 
 const rules = {
   email: v => /^\S+@\S+\.\S+$/.test(v) || 'E-mail inválido',
@@ -22,17 +22,12 @@ const router = useRouter();
 const toast = useToast();
 
 const submitForm = async () => {
-  if (email.value.length == 0 || password.value.length == 0) {
-    toast.error('Por favor, preencha todos os campos.');
-    return;
-  }
+  if (email.value.length == 0 || password.value.length < 8) return toast.error('Por favor, preencha todos os campos.');
+  if (!(/^\S+@\S+\.\S+$/.test(email.value))) return toast.error('E-mail inválido');
 
   const user = await signIn({ email: email.value, password: password.value });
-  if (user?.message) {
-    toast.error(user.message);
-    return;
-  }
-
+  if (user?.error) return toast.error(user.error);
+  toast.sucess('Autenticação bem-sucedida');
   router.push('/dashboard');
 };
 </script>
