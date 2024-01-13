@@ -4,9 +4,9 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
-      path: '/signin',
-      name: 'signin',
-      component: () => import('../pages/signIn/index.vue')
+      path: '/',
+      name: 'login',
+      component: () => import('../pages/login/index.vue')
     },
     {
       path: '/dashboard',
