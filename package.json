@@ -1,5 +1,5 @@
 {
-  "name": "bp-agenda",
+  "name": "reserva-bp",
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
