@@ -11,6 +11,7 @@
     "pinia": "^2.1.7",
     "vue": "^3.2.45",
     "vue-router": "^4.2.5",
+    "vue-toastification": "^2.0.0-rc.5",
     "vuetify": "^3.0.4"
   },
   "devDependencies": {
