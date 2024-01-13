@@ -1,101 +1,88 @@
 <template>
   <v-app id="inspire">
-
-
-    <v-navigation-drawer v-model="drawer">
-      <v-sheet
-        color="blue"
-        class="pa-4"
-      >
-        <v-avatar
-          class="mb-4"
-          color="grey-darken-1"
-          size="64"
-        ></v-avatar>
-
-        <div>john@google.com</div>
-      </v-sheet>
-
-      <v-divider></v-divider>
-
-      <v-list>
-        <v-list-item
-          v-for="[icon, text] in links"
-          :key="icon"
-          :prepend-icon="icon"
-          :title="text"
-          link
-        ></v-list-item>
-      </v-list>
-    </v-navigation-drawer>
+    <v-app-bar class="px-3 pe-10">
+      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-title class="ms-auto">BP AGENDA</v-title>
+    </v-app-bar>
 
     <v-main>
-      <v-container
-        class="py-8 px-6"
-        fluid
-      >
-        <v-row>
-          <v-col
-            v-for="card in cards"
-            :key="card"
-            cols="12"
-          >
-          
-            <v-card>
-              <v-list lines="two">
-                <v-list-subheader :title="card"></v-list-subheader>
 
-                <template v-for="n in 6" :key="n">
-                  <v-list-item>
-                    <template v-slot:prepend>
-                      <v-avatar color="grey-darken-1"></v-avatar>
-                    </template>
-
-                    <v-list-item-title :title="`Message ${n}`"></v-list-item-title>
-
-                    <v-list-item-subtitle title="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nihil repellendus distinctio similique"></v-list-item-subtitle>
-                  </v-list-item>
-
-                  <v-divider
-                    v-if="n !== 6"
-                    :key="`divider-${n}`"
-                    inset
-                  ></v-divider>
-                </template>
-              </v-list>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
     </v-main>
+
+    <v-navigation-drawer v-model="drawer">
+      <div class="px-3" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between; ">
+        <div>
+          <v-sheet class="pa-6" style="flex-direction: row; display: flex; align-items:  center; justify-content: space-around;">
+            <avatar :name="store.user.name" :size="50" />
+            <div>
+              <div>{{ store.user.name }}</div>
+            </div>
+          </v-sheet>
+          <v-divider></v-divider>
+
+
+          <v-list>
+            <v-list-item
+              v-for="[icon, text, route] in links"
+              :key="icon"
+              :to="route"
+              link
+              :class="{ 'v-list-item--active': isActiveRoute(route) }"
+            >
+              <v-list-item-content class="d-flex px-6" style="justify-content: space-between;">
+                <v-list-item-icon>
+                  <v-icon>{{ icon }}</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title class="">{{ text }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </div>
+
+        <v-list>
+          <v-divider></v-divider>
+          <v-list-item
+            v-for="[icon, text, route] in links2"
+            :key="icon"
+            :to="route"
+            link
+            :class="{ 'v-list-item--active': isActiveRoute(route) }"
+          >
+            <v-list-item-content class="d-flex px-6" style="justify-content: space-between;">
+              <v-list-item-icon>
+                <v-icon>{{ icon }}</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title class="">{{ text }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </div>
+    </v-navigation-drawer>
   </v-app>
 </template>
 
 <script setup>
-  import { ref } from 'vue'
+import { ref, computed } from 'vue';
+import { useRoute } from 'vue-router';
+import { useUserStore } from '../../stores/user.ts';
+import Avatar from '../../components/layout/avatar.vue';
 
-  const cards = ['Today', 'Yesterday']
-  const links = [
-    ['mdi-inbox-arrow-down', 'Inbox'],
-    ['mdi-send', 'Send'],
-    ['mdi-delete', 'Trash'],
-    ['mdi-alert-octagon', 'Spam'],
-  ]
+const store = useUserStore();
 
-  const drawer = ref(null)
-</script>
+const links = [
+  ['mdi mdi-calendar-account', 'Agenda', '/agenda'],
+  ['mdi mdi-history', 'Histórico', '/historico'],
+];
 
-<script>
-  export default {
-    data: () => ({
-      cards: ['Today', 'Yesterday'],
-      drawer: null,
-      links: [
-        ['mdi-inbox-arrow-down', 'Inbox'],
-        ['mdi-send', 'Send'],
-        ['mdi-delete', 'Trash'],
-        ['mdi-alert-octagon', 'Spam'],
-      ],
-    }),
-  }
+const links2 = [
+  ['mdi mdi-account-box', 'Minha conta', '/minha-conta'],
+  ['mdi mdi-cog', 'Configurações', '/configuracoes'],
+];
+
+const drawer = ref(null);
+const route = useRoute();
+
+const isActiveRoute = (targetRoute) => {
+  return computed(() => route.path === targetRoute).value;
+};
 </script>
