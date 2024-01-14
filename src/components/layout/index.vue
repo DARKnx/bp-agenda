@@ -24,7 +24,7 @@
           <v-divider></v-divider>
 
           <v-list>
-            <v-list-item v-for="[icon, text, route] in defaultLinks" :key="icon" :to="route" link
+            <v-list-item class="my-1" v-for="[icon, text, route] in defaultLinks" :key="icon" :to="route" link
               :class="{ 'v-list-item--active': route === currentRoute }">
               <v-list-item-content class="d-flex px-6">
                 <v-list-item-icon class="pr-5">
