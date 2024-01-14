@@ -37,7 +37,7 @@ const router = createRouter({
     },
     {
       path: '/dashboard/historic',
-      name: 'profile',
+      name: 'historic',
       component: () => import('../pages/historic/index.vue'),
       meta: { requiresAuth: true }
     },
