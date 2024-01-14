@@ -51,7 +51,7 @@
       </div>
     </v-navigation-drawer>
 
-    <v-main>
+    <v-main style="overflow-y: auto; height: 100vh; ">
       <v-container fluid class="custom-container fill-height">
         <slot></slot>
       </v-container>
