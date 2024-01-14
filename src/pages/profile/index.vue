@@ -40,7 +40,7 @@
           clearable
           class="my-2"
         />
-        <v-btn block class="mb-5 mx-auto" color="blue" size="large" variant="tonal" type="submit" max-width="50%">
+        <v-btn  @click="submitData" block class="mb-5 mx-auto" color="blue" size="large" variant="tonal" type="submit" max-width="50%">
             ATUALIZAR INFORMAÇÕES
         </v-btn>
         <v-btn block class="mb-5 mx-auto" color="red" size="large" variant="tonal" type="submit" max-width="50%">
@@ -51,21 +51,35 @@
   </template>
   
   <script setup>
+  import { useToast } from "vue-toastification";
   import { ref } from 'vue';
 
   import Layout from '../../components/layout/index.vue';
   import { useUserStore } from '../../stores/user.ts';
+  import { updateUser } from '../../actions/user.ts';
   
   const store = useUserStore();
+  const toast = useToast();
 
-  const resume = ref( store.user.resume|| '');
+  const schedulingWithoutRequest = ref(store.user.schedulingWithoutRequest || null);
+  const meetingPreference = ref(store.user.meetingPreference || null);
+  const resume = ref( store.user.resume|| null);
   const role = ref( store.user.role || '');
-  const schedulingWithoutRequest = ref('');
   const name = ref( store.user.name|| '');
-  const meetingPreference = ref('');
 
   const rules = {
       required: value => !!value || 'Campo obrigatório.'
   };
+
+  const submitData = async () => {
+      if (name.value.length == 0) return toast.error('Por favor, preencha todos os campos.');
+      const user = await updateUser({ id: store.user._id, data: { role: role.value, name: name.value, resume: resume.value || '', schedulingWithoutRequest: schedulingWithoutRequest.value  || '', meetingPreference: meetingPreference.value || ''  }});
+      if (user?.error) return toast.error(user.error);
+      toast.success('Atualização bem-sucedida');
+  };
+
+  const deleteAccount = async () => {
+    
+  }
   </script>
   

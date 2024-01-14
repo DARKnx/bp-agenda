@@ -47,7 +47,6 @@ export const signIn = async ({ email, password }: UserSignIn): Promise<any> => {
 export const signUp = async ({ email, password, name, role }: UserSignUp): Promise<any> => {
     try {
         const response = await api.post('/user/signup', { email, password, name, role });
-        console.log(response.data)
         const token = response.data.token;
         if (!token) {
             return {
@@ -56,6 +55,23 @@ export const signUp = async ({ email, password, name, role }: UserSignUp): Promi
         }
         await setAuthToken(token);
         var user = await getUser();
+        return user;
+    } catch(err){
+        return { error: (err instanceof AxiosError) ? err.response?.data.msg : 'Erro desconhecido.' };
+    }
+}
+
+export const updateUser = async ({ id, data }: { id: string, data: object }): Promise<any> => {
+    try {
+        const response = await api.put('/user/update', { id, data });
+        const user = response.data.user;
+        if (!user) {
+            return {
+                error: "Erro na autenticação."
+            };
+        }
+        console.log(user)
+        await getUser();
         return user;
     } catch(err){
         return { error: (err instanceof AxiosError) ? err.response?.data.msg : 'Erro desconhecido.' };

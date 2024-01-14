@@ -2,6 +2,8 @@ import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 
 interface User {
+  schedulingWithoutRequest: string;
+  meetingPreference: string;
   password: string;
   resume: string;
   email: string;
