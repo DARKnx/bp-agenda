@@ -77,12 +77,11 @@
 
     const defaultLinks = [
       ['mdi mdi-calendar-account', 'Agenda', '/dashboard/schedule'],
-      ['mdi mdi-account-box', 'Minha conta', '/dashboard/profile'],
       ['mdi mdi-history', 'Histórico', '/dashboard/historic'],
     ];
 
     const settingsLinks = [
-      ['mdi mdi-cog', 'Configurações', '/dashboard/settings'],
+      ['mdi mdi-account-box', 'Minha conta', '/dashboard/profile'],
       ['mdi mdi-logout', 'Sair', '/logout'],
     ];
 
