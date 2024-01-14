@@ -34,7 +34,7 @@
       const user = await signIn({ email: email.value, password: password.value });
       if (user?.error) return toast.error(user.error);
       toast.success('Autenticação bem-sucedida');
-      router.push('/dashboard/schedule');
+      router.push('/dashboard/calendar');
     };
 </script>
 

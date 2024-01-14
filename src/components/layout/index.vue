@@ -76,7 +76,7 @@
     const currentRoute = ref(route.path);
 
     const defaultLinks = [
-      ['mdi mdi-calendar-account', 'Agenda', '/dashboard/schedule'],
+      ['mdi mdi-calendar-account', 'Calendário', '/dashboard/calendar'],
       ['mdi mdi-history', 'Histórico', '/dashboard/historic'],
     ];
 

@@ -12,9 +12,9 @@ const router = createRouter({
       component: () => import('../pages/login/index.vue')
     },
     {
-      path: '/dashboard/schedule',
-      name: 'schedule',
-      component: () => import('../pages/schedule/index.vue'),
+      path: '/dashboard/calendar',
+      name: 'calendar',
+      component: () => import('../pages/calendar/index.vue'),
       meta: { requiresAuth: true }
     },
     {

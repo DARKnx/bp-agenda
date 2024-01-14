@@ -36,7 +36,7 @@
       const user = await signUp({ email: email.value, password: password.value, name: name.value, role: role.value});
       if (user?.error) return toast.error(user.error);
       toast.success('Autenticação bem-sucedida');
-      router.push('/dashboard/schedule');
+      router.push('/dashboard/calendar');
     };
 </script>
 
