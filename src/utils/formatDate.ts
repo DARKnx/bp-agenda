@@ -6,7 +6,7 @@ const formatDate = (date: string, includeTime: boolean = true): string => {
       options.minute = 'numeric';
     }
   
-    return new Date(date).toLocaleString('en-US', options);
+    return new Date(date).toLocaleString('pt-BR', options);
   };
 
 export default formatDate
