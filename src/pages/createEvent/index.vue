@@ -2,48 +2,47 @@
   <Layout>
     <div style="width: 50%; margin: auto;">
       <v-text-field 
-        :rules="[rules.required]"
-        prepend-inner-icon="mdi mdi-alphabetical-variant"
         v-model="name" 
-        label="Seu nome" 
+        label="Titulo" 
         class="my-2"
+        prepend-inner-icon="mdi mdi-alphabetical-variant"
+        :rules="[rules.required]"
         clearable 
       />
       <v-textarea
-        name="input-7-1"
-        :rules="[rules.required]"
-        prepend-inner-icon="mdi mdi-text-account"
-        v-model="resume" 
-        variant="filled"
+        v-model="description" 
         label="Descrição"
         class="my-2"
+        prepend-inner-icon="mdi mdi-text-account"
+        :rules="[rules.required]"
+        variant="filled"
         auto-grow
         clearable
       />
       <v-select
-        :items="brokers"
-        label="Escolha um corretor para te atender"
         v-model="broker"
+        label="Escolha um corretor para te atender"
+        class="my-2"
+        :items="brokers"
         clearable
         item-title="name"
-        class="my-2"
       />
       <v-select
-        :items="['30 minutos', '1 hora', '1 hora e 30 minutos', '2 horas']"
-        label='Escolha uma duração para reunião'
         v-model="duration"
-        clearable
+        label='Escolha uma duração para reunião'
         class="my-2"
+        :items="['30 minutos', '1 hora', '1 hora e 30 minutos', '2 horas']"
+        clearable
       />
       <v-btn @click="openDatePickerDialog" class="mb-3 py-3" style="width: 100%;  height: auto">
         Escolher a data e horário da reunião 
       </v-btn>
       <v-select
-        :items="['online', 'presencial']"
-        label="Deseja uma reunião online ou presencial?"
         v-model="meetingPreference"
-        clearable
+        label="Deseja uma reunião online ou presencial?"
         class="my-2"
+        :items="['online', 'presencial']"
+        clearable
       />
 
       <v-dialog v-model="datePickerDialog" max-width="500">
@@ -60,20 +59,20 @@
           </template>
 
           <template v-if="dialogStep === 2">
-      <v-card-text>
-        <p>Data selecionada: {{ formatDate(selectedDate, false) }}</p>
-        <p>Horários disponíveis:</p>
-        <v-select
-          v-if="availableTimes && availableTimes.length > 0"
-          :items="availableTimes"
-          v-model="selectedTime"
-          label="Selecione um horário"
-          clearable
-          class="my-2"
-        ></v-select>
-        <p v-else>Nenhum horário disponível para esta data.</p>
-      </v-card-text>
-    </template>
+            <v-card-text>
+              <p>Data selecionada: {{ formatDate(selectedDate, false) }}</p>
+              <p>Horários disponíveis:</p>
+              <v-select
+                v-if="availableTimes && availableTimes.length > 0"
+                v-model="selectedTime"
+                label="Selecione um horário"
+                class="my-2"
+                :items="availableTimes"
+                clearable
+              ></v-select>
+              <p v-else>Nenhum horário disponível para esta data.</p>
+            </v-card-text>
+          </template>
 
           <v-card-actions>
             <v-btn @click="closeDatePickerDialog" text width="50%">
@@ -89,35 +88,43 @@
       <v-btn @click="submitData" block class="mb-5 mx-auto" color="blue" size="large" variant="tonal" type="submit" max-width="50%">
         FAZER AGENDAMENTO
       </v-btn>
+
+      <v-btn @click="handleCancel" block class="mb-5 mx-auto" color="red" size="large" variant="tonal" type="submit" max-width="50%">
+        CANCELAR
+      </v-btn>
     </div>
   </Layout>
 </template>
 
-<script setup lang="js">
-import { ref, onMounted } from 'vue';
-import Layout from '../../components/layout/index.vue';
-import { getBrokers, getBrokersSchedule } from '../../actions/schedule.ts';
-import formatDate from '../../utils/formatDate.ts';
+<script setup>
 import { useToast } from 'vue-toastification';
-import { getAvailableTimes } from './index.ts';
+import { useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue';
 
+import { getBrokers, getBrokersSchedule, createSchedule } from '../../actions/schedule.ts';
+import { getAvailableTimes, combineDateTime} from './index.ts';
+import Layout from '../../components/layout/index.vue';
+import { useUserStore } from '../../stores/user.ts';
+import formatDate from '../../utils/formatDate.ts';
+
+const store = useUserStore();
+const router = useRouter();
 const toast = useToast();
 
-const schedulingWithoutRequest = ref(null);
 const meetingPreference = ref(null);
-const brokers = ref([]);
-const broker = ref(null);
-const duration = ref(null);
-const resume = ref(null);
-const role = ref(null);
-const name = ref(null);
+const datePickerDialog = ref(false);
+const availableTimes = ref(null);
 const selectedDate = ref(null);
 const selectedTime = ref(null);
-const datePickerDialog = ref(false);
-const dialogStep = ref(1);
 const brokerSchedules = ref();
+const description = ref(null);
+const duration = ref(null);
+const dialogStep = ref(1);
+const broker = ref(null);
+const name = ref(null);
+const brokers = ref([]);
+
 const startWork = '08:00';
-const availableTimes = ref(null)
 const endWork = '18:00';
 
 const rules = {
@@ -154,13 +161,35 @@ const handleDialogStep = async () => {
 };
 
 const submitData = async () => {
-  if (name.value.length === 0 || !selectedDate.value || !selectedTime.value) {
+  if (name.value?.length === 0 || description.value?.length === 0 || !selectedDate.value || !selectedTime.value || !meetingPreference.value) {
     return toast.error('Por favor, preencha todos os campos.');
-    datePickerDialog.value = false;
-    dialogStep.value = 1;
   }
+  const selectedBroker = brokers.value.find(b => b.name == broker.value);
+  const startEnd = selectedTime.value.replace('até ', '').split(' ');
+  var response = await createSchedule({
+    startDate: combineDateTime(selectedDate.value, startEnd[0]), 
+    endDate: combineDateTime(selectedDate.value, startEnd[0]),
+    consultant: {
+      name: selectedBroker.name,
+      id: selectedBroker._id
+    },
+    client:{
+      name: store.user.name,
+      id: store.user._id
+    },
+    description: description.value, 
+    name: name.value, 
+    status: selectedBroker.schedulingWithoutRequest == 'sim' ? 'solicitado' : 'aprovado'
+  });
+  if (response?.error) return toast.error(response.error);
+  toast.success('Agendamento criado com sucesso.');
+  router.push('/dashboard/schedule')
 };
 
+const handleCancel = () => {
+  toast.success('Agendamento cancelado com sucesso.');
+  router.push('/dashboard/schedule')
+};
 
 const getData = async () => {
   const response = await getBrokers();

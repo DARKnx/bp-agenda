@@ -1,4 +1,4 @@
-const combineDateTime = (date: Date, time: string): Date => {
+export const combineDateTime = (date: Date, time: string): Date => {
   const [hours, minutes] = time.split(':').map(Number);
   const combinedDateTime = new Date(date);
   combinedDateTime.setUTCHours(hours, minutes);

@@ -18,6 +18,7 @@ export const getSchedule = async (): Promise<any> => {
 export const createSchedule = async (body: IEventCreate): Promise<any> => {
     try {
         const response = await api.post('event/create', body);
+        console.log(body)
         const data = response.data;
         return data;
     } catch (err) {
