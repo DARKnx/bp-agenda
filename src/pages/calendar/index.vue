@@ -1,6 +1,6 @@
 <template>
   <Layout>
-    <v-main class="ma-10 pa-3" style="background-color: transparent;">
+    <v-main class="ma-1 pa-1" style=" width: 90vw; background-color: transparent; overflow-x: hidden;">
       <v-sheet tile class="d-flex" style="background-color: transparent;">
         <v-select v-model="type" :items="types" dense variant="outlined" hide-details class="mb-5 mx-2"
           label="Modo de Visualização"></v-select>
@@ -8,7 +8,7 @@
           class="mb-5 mx-2"></v-select>
       </v-sheet>
       <v-sheet style="background-color: transparent;">
-        <v-calendar ref="calendar" v-model="value" :weekdays="weekday" :view-mode="type" :events="schedules"
+        <v-calendar styles="width: 90vw;" ref="calendar" v-model="value" :weekdays="weekday" :view-mode="type" :events="schedules"
           class="calendar-container"></v-calendar>
       </v-sheet>
     </v-main>

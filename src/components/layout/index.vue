@@ -1,7 +1,9 @@
 <template>
   <v-app id="inspire">
     <v-app-bar class="px-3 pe-10">
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon @click="drawer = !drawer">
+      </v-app-bar-nav-icon>
+      <Theme/>
       <v-title class="ms-auto text-h6 font-weight-bold" :style="{ color: $vuetify.theme.themes.light.colors.primary }">
         RESERVA
         <span class="ms-auto text-h6 font-weight-black"
@@ -68,6 +70,7 @@
     import { useUserStore } from '../../stores/user.ts';
     import formatName from '../../utils/formatName.ts';
     import Avatar from '../avatar/index.vue';
+    import Theme from '../themeToggle/index.vue';
     import './index.css'
 
     const store = useUserStore();
