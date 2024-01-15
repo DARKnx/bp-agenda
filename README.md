@@ -3,6 +3,9 @@
 
 Para agendar melhor os atendimentos e planos da Bem Protege foi requisitada a criação de um aplicativo chamado Reserva BP. Ele será encarregado de criar agendas entre Corretores de Seguro e Clientes.
 
+## Deploy
+
+[reserva-bp.odutra.xyz](https://reserva-bp.odutra.xyz)
 
 ## Bibliotecas utilizadas
 - vuetify
