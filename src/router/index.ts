@@ -24,6 +24,12 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
+      path: '/dashboard/create-event',
+      name: 'create-event',
+      component: () => import('../pages/createEvent/index.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
       path: '/logout',
       name: 'logout',
       component: () => import('../pages/logout/index.vue'),

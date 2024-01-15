@@ -2,6 +2,11 @@
   <Layout>
     <v-main class="ma-10 pa-3" style="background-color: transparent;">
       <v-column justify="space-around">
+        <v-btn class="py-5 px-10" variant="tonal" style="height: auto; width: auto;"
+                      @click="handleCreateEvent">
+                      <v-icon icon="mdi-plus" class="mr-3"/>
+                      AGENDAR REUNIÃO
+                    </v-btn>
 
         <v-card class="my-5 pa-5" style="margin: auto; align-items: center;" width="45vw" v-for="day in days"
           :key="day.date">
@@ -58,7 +63,9 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { useDate } from 'vuetify';
+
 import Layout from '../../components/layout/index.vue';
 import { getSchedule } from '../../actions/schedule.ts';
 import formatDate from '../../utils/formatDate.ts';
@@ -67,6 +74,8 @@ const days = ref([]);
 const adapter = useDate();
 const selectedEvent = ref(null);
 const dialogVisible = ref(false);
+
+const router = useRouter();
 
 const getData = async () => {
   const response = await getSchedule();
@@ -106,6 +115,10 @@ const handleActionButtonClick = (event) => {
 
 const handleApproveButtonClick = (event) => {
   alert(`evento: ${event.name} - ID: ${event._id}`);
+};
+
+const handleCreateEvent = (event) => {
+  router.push('/dashboard/create-event');
 };
 
 const formatDateTime = (dateTime) => {
