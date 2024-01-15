@@ -21,7 +21,7 @@
         clearable
       />
       <v-select
-        :items="['normal', 'admin', 'consultor']"
+        :items="['cliente', 'corretor']"
         v-model="role"
         label="Cargo"
         class="my-2"

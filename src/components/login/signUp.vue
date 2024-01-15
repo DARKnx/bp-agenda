@@ -78,7 +78,7 @@
       <v-select
         label="Cargo"
         v-model="role"
-        :items="['normal', 'admin', 'consultor']"
+        :items="['cliente', 'corretor']"
       />
       <v-btn block class="mb-5 mx-auto" color="blue" size="large" variant="tonal" type="submit" max-width="50%">
         CADASTRAR

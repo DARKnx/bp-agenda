@@ -18,6 +18,12 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
+      path: '/dashboard/schedule',
+      name: 'schedule',
+      component: () => import('../pages/schedule/index.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
       path: '/logout',
       name: 'logout',
       component: () => import('../pages/logout/index.vue'),

@@ -77,6 +77,7 @@
 
     const defaultLinks = [
       ['mdi mdi-calendar-account', 'Calendário', '/dashboard/calendar'],
+      ['mdi mdi-bell-alert', 'Agenda', '/dashboard/schedule'],
       ['mdi mdi-history', 'Histórico', '/dashboard/historic'],
     ];
 

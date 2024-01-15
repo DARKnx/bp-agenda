@@ -5,5 +5,5 @@ export interface UserSignIn {
 
 export interface UserSignUp  extends UserSignIn {
     name: string;
-    role: 'normal' | 'admin' | 'consultor';
+    role: 'cliente' | 'admin' | 'corretor';
 }
