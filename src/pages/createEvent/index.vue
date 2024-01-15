@@ -35,6 +35,9 @@
         clearable
         class="my-2"
       />
+      <v-btn @click="openDatePickerDialog" class="mb-3 py-3" style="width: 100%;  height: auto">
+        Escolher a data e horário da reunião 
+      </v-btn>
       <v-select
         :items="['online', 'presencial']"
         label="Deseja uma reunião online ou presencial?"
@@ -42,10 +45,6 @@
         clearable
         class="my-2"
       />
-
-      <v-btn @click="openDatePickerDialog" class="my-2" style="width: 100%;">
-        Escolher Data
-      </v-btn>
 
       <v-dialog v-model="datePickerDialog" max-width="500">
         <v-card class="pa-5">
@@ -60,15 +59,24 @@
             ></v-date-picker>
           </template>
 
-
           <template v-if="dialogStep === 2">
-            <v-card-text>
-              <p>Data selecionada: {{ formatDate(selectedDate,false) }}</p>
-            </v-card-text>
-          </template>
+      <v-card-text>
+        <p>Data selecionada: {{ formatDate(selectedDate, false) }}</p>
+        <p>Horários disponíveis:</p>
+        <v-select
+          v-if="availableTimes && availableTimes.length > 0"
+          :items="availableTimes"
+          v-model="selectedTime"
+          label="Selecione um horário"
+          clearable
+          class="my-2"
+        ></v-select>
+        <p v-else>Nenhum horário disponível para esta data.</p>
+      </v-card-text>
+    </template>
 
           <v-card-actions>
-            <v-btn @click="handleDialogStep" text width="50%">
+            <v-btn @click="closeDatePickerDialog" text width="50%">
               {{ dialogStep === 1 ? 'Cancelar' : 'Voltar' }}
             </v-btn>
             <v-btn @click="handleDialogStep" color="blue" text width="50%">
@@ -104,17 +112,14 @@
   </Layout>
 </template>
 
-<script setup>
-import { useToast } from "vue-toastification";
-import { useRouter } from 'vue-router';
-import { ref, onMounted, computed } from 'vue';
+<script setup lang="js">
+import { ref, onMounted } from 'vue';
 import Layout from '../../components/layout/index.vue';
-import { useUserStore } from '../../stores/user.ts';
-import formatDate from '../../utils/formatDate.ts'
-import { getBrokers } from '../../actions/schedule.ts';
+import { getBrokers, getBrokersSchedule } from '../../actions/schedule.ts';
+import formatDate from '../../utils/formatDate.ts';
+import { useToast } from 'vue-toastification';
+import { getAvailableTimes } from './index.ts';
 
-const store = useUserStore();
-const router = useRouter();
 const toast = useToast();
 
 const schedulingWithoutRequest = ref(null);
@@ -126,11 +131,16 @@ const resume = ref(null);
 const role = ref(null);
 const name = ref(null);
 const selectedDate = ref(null);
+const selectedTime = ref(null);
 const datePickerDialog = ref(false);
 const dialogStep = ref(1);
+const brokerSchedules = ref();
+const startWork = '08:00';
+const availableTimes = ref(null)
+const endWork = '18:00';
 
 const rules = {
-  required: value => !!value || 'Campo obrigatório.'
+  required: value => !!value || 'Campo obrigatório.',
 };
 
 const openDatePickerDialog = () => {
@@ -139,31 +149,32 @@ const openDatePickerDialog = () => {
 
 const closeDatePickerDialog = () => {
   datePickerDialog.value = false;
-
   dialogStep.value = 1;
 };
 
-const handleDialogStep = () => {
+const handleDialogStep = async () => {
   if (dialogStep.value === 1) {
-
     if (!selectedDate.value) {
       toast.error('Por favor, selecione uma data.');
       return;
     }
     dialogStep.value = 2;
+    const selectedBroker = brokers.value.find(b => b.name == broker.value);
+    const response = await getBrokersSchedule({ id: selectedBroker._id, date: selectedDate.value });
+    brokerSchedules.value = response;
+    var times = getAvailableTimes(selectedDate.value, response, duration.value, '08:00', '18:00')
+    console.log(times)
+    availableTimes.value = times.map(x => `${x.start} até ${x.end}`)
   } else {
-
-    dialogStep.value = 1;
+    // Pode adicionar lógica adicional para a segunda etapa aqui, se necessário
   }
 };
 
 const submitData = async () => {
-  if (name.value.length === 0 || !selectedDate.value) {
+  if (name.value.length === 0 || !selectedDate.value || !selectedTime.value) {
     return toast.error('Por favor, preencha todos os campos.');
   }
-  const user = await updateUser({ data: { role: role.value, name: name.value, resume: resume.value || '', schedulingWithoutRequest: schedulingWithoutRequest.value || '', meetingPreference: meetingPreference.value || '', selectedDate: selectedDate.value } });
-  if (user?.error) return toast.error(user.error);
-  toast.success('Atualização bem-sucedida');
+  // Adicione lógica de envio de dados aqui
 };
 
 const deleteDialog = ref(false);
@@ -179,11 +190,12 @@ const cancelDelete = () => {
 const getData = async () => {
   const response = await getBrokers();
   brokers.value = response;
-  console.log(response);
-}
+};
 
 onMounted(() => {
   getData();
 });
+
+// ... Outras funções e métodos
 
 </script>

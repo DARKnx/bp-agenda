@@ -25,9 +25,9 @@ export const getBrokers = async (): Promise<any> => {
     }
 }
 
-export const getBrokersSchedule = async (): Promise<any> => {
+export const getBrokersSchedule = async ({id, date}: {id: String, date: Date}): Promise<any> => {
     try {
-        const response = await api.post('user/broker-schedule');
+        const response = await api.post('event/broker-schedule', {id, date});
         const data = response.data;
         return data;
 
