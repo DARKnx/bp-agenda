@@ -1,5 +1,6 @@
 import { AxiosError, AxiosRequestConfig } from "axios";
 
+import { IEventCreate } from "../types/event";
 import api from "../utils/api";
 
 
@@ -9,6 +10,16 @@ export const getSchedule = async (): Promise<any> => {
         const data = response.data;
         return data;
 
+    } catch (err) {
+        return { error: (err instanceof AxiosError) ? err.response?.data.msg : 'Erro desconhecido.' };
+    }
+}
+
+export const createSchedule = async (body: IEventCreate): Promise<any> => {
+    try {
+        const response = await api.post('event/create', body);
+        const data = response.data;
+        return data;
     } catch (err) {
         return { error: (err instanceof AxiosError) ? err.response?.data.msg : 'Erro desconhecido.' };
     }

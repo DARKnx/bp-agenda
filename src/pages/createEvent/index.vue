@@ -89,25 +89,6 @@
       <v-btn @click="submitData" block class="mb-5 mx-auto" color="blue" size="large" variant="tonal" type="submit" max-width="50%">
         FAZER AGENDAMENTO
       </v-btn>
-
-      <v-dialog v-model="deleteDialog" max-width="500">
-        <v-card class="pa-5">
-          <v-card-title class="headline">
-            Confirmar Exclusão de Conta
-          </v-card-title>
-          <v-card-text>
-            Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita.
-          </v-card-text>
-          <v-card-actions class="text-center">
-            <v-btn @click="deleteAccount" color="red" text width="50%">
-              Confirmar
-            </v-btn>
-            <v-btn @click="cancelDelete" text  width="50%">
-              Cancelar
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
     </div>
   </Layout>
 </template>
@@ -144,48 +125,42 @@ const rules = {
 };
 
 const openDatePickerDialog = () => {
+  if (!broker.value) return toast.error('Por favor, selecione um corretor.');
+  if (!duration.value) return toast.error('Por favor, selecione uma duração.');
   datePickerDialog.value = true;
 };
 
 const closeDatePickerDialog = () => {
-  datePickerDialog.value = false;
+  if (dialogStep.value === 1) return datePickerDialog.value = false;
   dialogStep.value = 1;
 };
 
 const handleDialogStep = async () => {
   if (dialogStep.value === 1) {
-    if (!selectedDate.value) {
-      toast.error('Por favor, selecione uma data.');
-      return;
-    }
+    if (!selectedDate.value) return toast.error('Por favor, selecione uma data.');
     dialogStep.value = 2;
     const selectedBroker = brokers.value.find(b => b.name == broker.value);
     const response = await getBrokersSchedule({ id: selectedBroker._id, date: selectedDate.value });
     brokerSchedules.value = response;
     var times = getAvailableTimes(selectedDate.value, response, duration.value, '08:00', '18:00')
-    console.log(times)
     availableTimes.value = times.map(x => `${x.start} até ${x.end}`)
   } else {
-    // Pode adicionar lógica adicional para a segunda etapa aqui, se necessário
+    if (!selectedTime.value) return toast.error('Por favor, selecione uma horário.');
+    toast.success('Horário selecionado com sucesso.');
+    datePickerDialog.value = false;
+    dialogStep.value = 1;
+    
   }
 };
 
 const submitData = async () => {
   if (name.value.length === 0 || !selectedDate.value || !selectedTime.value) {
     return toast.error('Por favor, preencha todos os campos.');
+    datePickerDialog.value = false;
+    dialogStep.value = 1;
   }
-  // Adicione lógica de envio de dados aqui
 };
 
-const deleteDialog = ref(false);
-
-const confirmDelete = () => {
-  deleteDialog.value = true;
-};
-
-const cancelDelete = () => {
-  deleteDialog.value = false;
-};
 
 const getData = async () => {
   const response = await getBrokers();
@@ -195,7 +170,4 @@ const getData = async () => {
 onMounted(() => {
   getData();
 });
-
-// ... Outras funções e métodos
-
 </script>
