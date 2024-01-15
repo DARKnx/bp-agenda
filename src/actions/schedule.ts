@@ -1,4 +1,4 @@
-import { AxiosError } from "axios";
+import { AxiosError, AxiosRequestConfig } from "axios";
 
 import api from "../utils/api";
 
@@ -16,7 +16,7 @@ export const getSchedule = async (): Promise<any> => {
 
 export const getBrokers = async (): Promise<any> => {
     try {
-        const response = await api.get('user/get-all', { role: 'corretor'} as any);
+        const response = await api.get('user/get-all');
         const data = response.data;
         return data;
 

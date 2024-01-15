@@ -21,28 +21,67 @@
         clearable
       />
       <v-select
-        :items="['cliente', 'corretor']"
-        v-model="role"
-        label="Cargo"
+        :items="brokers"
+        label="Escolha um corretor para te atender"
+        v-model="broker"
+        clearable
+        item-title="name"
         class="my-2"
       />
       <v-select
-        :items="['online', 'presencial', 'online e presencial']"
-        label="Qual estilo de reunião prefere?"
+        :items="['30 minutos', '1 hora', '1 hora e 30 minutos', '2 horas']"
+        label='Escolha uma duração para reunião'
+        v-model="duration"
+        clearable
+        class="my-2"
+      />
+      <v-select
+        :items="['online', 'presencial']"
+        label="Deseja uma reunião online ou presencial?"
         v-model="meetingPreference"
         clearable
         class="my-2"
       />
-      <v-select
-        :items="['sim', 'não']"
-        label="Permitir agendamento sem solicitação prévia?"
-        v-model="schedulingWithoutRequest"
-        clearable
-        class="my-2"
-      />
-      <v-btn @click="submitData" block class="mb-5 mx-auto" color="blue" size="large" variant="tonal" type="submit" max-width="50%">
-          FAZER AGENDAMENTO
+
+      <v-btn @click="openDatePickerDialog" class="my-2" style="width: 100%;">
+        Escolher Data
       </v-btn>
+
+      <v-dialog v-model="datePickerDialog" max-width="500">
+        <v-card class="pa-5">
+          <v-card-title>Escolha a Data da Reunião</v-card-title>
+
+          <template v-if="dialogStep === 1">
+            <v-date-picker
+              v-model="selectedDate"
+              :rules="[rules.required]"
+              locale="pt-BR"
+              scrollable
+            ></v-date-picker>
+          </template>
+
+
+          <template v-if="dialogStep === 2">
+            <v-card-text>
+              <p>Data selecionada: {{ formatDate(selectedDate,false) }}</p>
+            </v-card-text>
+          </template>
+
+          <v-card-actions>
+            <v-btn @click="handleDialogStep" text width="50%">
+              {{ dialogStep === 1 ? 'Cancelar' : 'Voltar' }}
+            </v-btn>
+            <v-btn @click="handleDialogStep" color="blue" text width="50%">
+              {{ dialogStep === 1 ? 'Avançar' : 'Confirmar' }}
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <v-btn @click="submitData" block class="mb-5 mx-auto" color="blue" size="large" variant="tonal" type="submit" max-width="50%">
+        FAZER AGENDAMENTO
+      </v-btn>
+
       <v-dialog v-model="deleteDialog" max-width="500">
         <v-card class="pa-5">
           <v-card-title class="headline">
@@ -68,11 +107,11 @@
 <script setup>
 import { useToast } from "vue-toastification";
 import { useRouter } from 'vue-router';
-import { ref } from 'vue';
-
+import { ref, onMounted, computed } from 'vue';
 import Layout from '../../components/layout/index.vue';
 import { useUserStore } from '../../stores/user.ts';
-import { updateUser, deleteUser } from '../../actions/user.ts';
+import formatDate from '../../utils/formatDate.ts'
+import { getBrokers } from '../../actions/schedule.ts';
 
 const store = useUserStore();
 const router = useRouter();
@@ -80,17 +119,49 @@ const toast = useToast();
 
 const schedulingWithoutRequest = ref(null);
 const meetingPreference = ref(null);
+const brokers = ref([]);
+const broker = ref(null);
+const duration = ref(null);
 const resume = ref(null);
 const role = ref(null);
 const name = ref(null);
+const selectedDate = ref(null);
+const datePickerDialog = ref(false);
+const dialogStep = ref(1);
 
 const rules = {
   required: value => !!value || 'Campo obrigatório.'
 };
 
+const openDatePickerDialog = () => {
+  datePickerDialog.value = true;
+};
+
+const closeDatePickerDialog = () => {
+  datePickerDialog.value = false;
+
+  dialogStep.value = 1;
+};
+
+const handleDialogStep = () => {
+  if (dialogStep.value === 1) {
+
+    if (!selectedDate.value) {
+      toast.error('Por favor, selecione uma data.');
+      return;
+    }
+    dialogStep.value = 2;
+  } else {
+
+    dialogStep.value = 1;
+  }
+};
+
 const submitData = async () => {
-  if (name.value.length === 0) return toast.error('Por favor, preencha todos os campos.');
-  const user = await updateUser({ data: { role: role.value, name: name.value, resume: resume.value || '', schedulingWithoutRequest: schedulingWithoutRequest.value || '', meetingPreference: meetingPreference.value || '' } });
+  if (name.value.length === 0 || !selectedDate.value) {
+    return toast.error('Por favor, preencha todos os campos.');
+  }
+  const user = await updateUser({ data: { role: role.value, name: name.value, resume: resume.value || '', schedulingWithoutRequest: schedulingWithoutRequest.value || '', meetingPreference: meetingPreference.value || '', selectedDate: selectedDate.value } });
   if (user?.error) return toast.error(user.error);
   toast.success('Atualização bem-sucedida');
 };
@@ -104,4 +175,15 @@ const confirmDelete = () => {
 const cancelDelete = () => {
   deleteDialog.value = false;
 };
+
+const getData = async () => {
+  const response = await getBrokers();
+  brokers.value = response;
+  console.log(response);
+}
+
+onMounted(() => {
+  getData();
+});
+
 </script>
