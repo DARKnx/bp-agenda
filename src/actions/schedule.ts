@@ -18,9 +18,17 @@ export const getSchedule = async (): Promise<any> => {
 export const createSchedule = async (body: IEventCreate): Promise<any> => {
     try {
         const response = await api.post('event/create', body);
-        console.log(body)
         const data = response.data;
         return data;
+    } catch (err) {
+        return { error: (err instanceof AxiosError) ? err.response?.data.msg : 'Erro desconhecido.' };
+    }
+}
+export const updateSchedule = async ({id, data}:{ id: string, data: Partial<IEventCreate> }): Promise<any> => {
+    try {
+        const response = await api.put('event/update', { id, data });
+        const body = response.data;
+        return body;
     } catch (err) {
         return { error: (err instanceof AxiosError) ? err.response?.data.msg : 'Erro desconhecido.' };
     }
@@ -45,5 +53,5 @@ export const getBrokersSchedule = async ({id, date}: {id: String, date: Date}): 
 
     } catch (err) {
         return { error: (err instanceof AxiosError) ? err.response?.data.msg : 'Erro desconhecido.' };
-    }
+}
 }

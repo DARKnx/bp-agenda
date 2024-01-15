@@ -28,11 +28,11 @@
                     <p class="mt-0"><strong>criado em: </strong>{{ event.createAt }}</p>
                     <p class="mt-0"><strong>solicitador: </strong>{{ event.client }}</p>
                     <p class="mt-0"><strong>corretor: </strong>{{ event.consultant }}</p>
-                    <p class="mb-5"><strong>status: </strong>solicitado.</p>
-                    <v-btn :color="event.color" variant="outlined" @click="handleActionButtonClick(event)">
-                      EDITAR
+                    <p class="mb-5"><strong>status: </strong>{{ event.status ? event.status: 'sem status.' }}</p>
+                    <v-btn color="red" variant="outlined" @click="handleActionButtonClick(event)">
+                      CANCELAR
                     </v-btn>
-                    <v-btn v-if="event.status === 'solicited'" class="ml-2" color="green" variant="tonal"
+                    <v-btn v-if="event.status === 'solicitado' && event.role == 'corretor'" class="ml-2" color="green" variant="tonal"
                       @click="handleApproveButtonClick(event)">
                       APROVAR
                     </v-btn>
@@ -62,24 +62,28 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { useToast } from "vue-toastification";
 import { useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue';
 import { useDate } from 'vuetify';
 
 import Layout from '../../components/layout/index.vue';
-import { getSchedule } from '../../actions/schedule.ts';
+import { getSchedule, updateSchedule } from '../../actions/schedule.ts';
 import formatDate from '../../utils/formatDate.ts';
+import {useUserStore} from '../../stores/user.ts';
 
 const days = ref([]);
 const adapter = useDate();
 const selectedEvent = ref(null);
 const dialogVisible = ref(false);
 
+const store = useUserStore();
 const router = useRouter();
+const toast = useToast();
 
 const getData = async () => {
   const response = await getSchedule();
-  const groupedByDay = groupEventsByDay(response);
+  const groupedByDay = groupEventsByDay(response.reverse());
   days.value = groupedByDay;
 };
 
@@ -100,7 +104,8 @@ const groupEventsByDay = (events) => {
       createAt: formatDate(event.createAt),
       client: event.client?.name,
       consultant: event.consultant?.name,
-      status: 'solicited',
+      status: event.status,
+      role: store.user.role,
       description: event.description || 'sem descrição.',
       color: event.color || '#2196F3',
     });
@@ -108,16 +113,24 @@ const groupEventsByDay = (events) => {
   return Object.values(grouped);
 };
 
-const handleActionButtonClick = (event) => {
+const handleActionButtonClick = async (event) => {
   selectedEvent.value = event;
-  dialogVisible.value = true;
+  var response = await updateSchedule({id: selectedEvent.value._id, data: { status: 'cancelado' }});
+  if (response?.error) return toast.error(response.error);
+  toast.success('Agendamento cancelado');
+  getData();
 };
 
-const handleApproveButtonClick = (event) => {
-  alert(`evento: ${event.name} - ID: ${event._id}`);
+const handleApproveButtonClick = async (event) => {
+  selectedEvent.value = event;
+  var response = await updateSchedule({id: selectedEvent.value._id, data: { status: 'aprovado' }});
+  if (response?.error) return toast.error(response.error);
+  toast.success('Agendamento aprovado');
+  getData();
 };
 
 const handleCreateEvent = (event) => {
+  if (store.user.role != 'cliente') return  toast.error('Apenas clientes podem criar agendamentos.');
   router.push('/dashboard/create-event');
 };
 

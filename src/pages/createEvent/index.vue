@@ -196,7 +196,15 @@ const getData = async () => {
   brokers.value = response;
 };
 
+const checkUserRole = () => {
+  if (store.user.role != 'cliente'){
+    toast.error('Apenas clientes podem criar agendamentos.');
+    router.push('/dashboard/schedule');
+  }
+}
+
 onMounted(() => {
+  checkUserRole();
   getData();
 });
 </script>
