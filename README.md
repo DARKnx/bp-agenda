@@ -69,6 +69,9 @@ Instale as dependências
 ```bash
   npm install
 ```
+Clone o backend e o inicialize
+
+[reserva-api](https://github.com/DARKnx/bp-agenda-api)
 
 Inicie o servidor
 
