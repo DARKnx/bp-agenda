@@ -6,6 +6,7 @@ Para agendar melhor os atendimentos e planos da Bem Protege foi requisitada a cr
 ## Deploy
 
 [reserva-bp.odutra.xyz](https://reserva-bp.odutra.xyz)
+[documentação](https://app.swaggerhub.com/templates-docs/JOAOVITORNL/bp-agenda/1.0.2)
 
 ## Bibliotecas utilizadas
 - vuetify
